@@ -102,7 +102,7 @@ const CH = {
   jw: {name: '정우', c: '#4A6FA5'}, sy: {name: '수연', c: '#4E8F6B'}, sj: {name: '서진', c: '#5FA8BF'},
   mj: {name: '민재', c: '#E07B39'}, pk: {name: '박 할아버지', c: '#9A7656'}, uncle: {name: '큰외삼촌', c: '#C29A45'},
   msg: {name: '재난문자', c: '#C0392B'}, office: {name: '관리사무소', c: '#8C8F8A'}, officer: {name: '공무원', c: '#8C8F8A'},
-  stranger: {name: '지나던 사람', c: '#8C8F8A'}
+  stranger: {name: '지나던 사람', c: '#8C8F8A'}, police: {name: '경찰', c: '#2F3E5A'}
 };
 const FB = '"IBM Plex Sans KR", "Malgun Gothic", sans-serif';
 const FD = '"Gowun Batang", "Batang", serif';
@@ -260,7 +260,7 @@ const S = [
 {
   when: 'D-5 · 가족회의 · 연락 규칙', title: '전화가 안 될 때 다시 만나는 법',
   narr: '휴대폰 배터리가 떨어지면 번호 하나 기억 못 할 거라는 수연의 말에 다들 웃었다. 그래도 모두 연락처를 적은 종이를 접어 지갑에 넣었다.',
-  card: {title: '가족 연락 규칙', items: ['통화보다 문자를 먼저 쓴다. 통신망이 붐벼도 문자는 가는 경우가 많다.', '"이름 / 위치 / 상태 / 다음 행동" 형식으로 짧게 남긴다.', '연락이 끊기면 경보 해제 후 6시간 안에 지하 2층 B구역 기둥 앞에서 만난다.', '2차 집결지는 박달2동 주민센터. 그것도 안 되면 진안 외삼촌 집 전화로 소식을 남긴다.']},
+  card: {title: '가족 연락 규칙', items: ['통화보다 문자를 먼저 쓴다. 통신망이 붐벼도 문자는 가는 경우가 많다.', '"이름 / 위치 / 상태 / 다음 행동" 형식으로 짧게 남긴다.', '연락이 끊기면 경보 해제 후 6시간 안에 지하 2층 B구역 기둥 앞에서 만난다.', '2차 집결지는 박달2동 주민센터. 그것도 안 되면 진안 외삼촌 집 전화로 소식을 남긴다.', '기다리는 쪽은 집결지를 교대로 지키고, 자리를 비울 땐 쪽지(누가 · 몇 시 · 어디로)를 남긴다.', '밖에 있을 땐 가족을 찾아 집으로 뛰지 않는다. 가장 가까운 지하가 먼저다.']},
   draw(c, t, T, p) {
     c.fillStyle = '#2E3A3F'; c.fillRect(0, 0, W, H);
     c.fillStyle = '#111'; rr(c, 300, 60, 480, 790, 48); c.fill(); c.fillStyle = '#ECEFF1'; rr(c, 324, 100, 432, 710, 30); c.fill();
@@ -343,7 +343,7 @@ const S = [
   narr: '가족은 아침에 출발할 생각이었다. 그 전에 휴대폰들이 동시에 울었다. 귀를 찢는 재난문자 경보음, 그리고 창밖에서 높아졌다 낮아지기를 되풀이하는 3분짜리 사이렌이 울렸다.',
   lines: [['msg', '[긴급재난문자] 공습경보 발령. 즉시 가까운 지하 대피시설로 대피하시기 바랍니다.']],
   sound: 'raid',
-  fork: '만약 그 새벽 민재가 집에 없었다면? 가족이 흩어졌을 때의 갈래를 5장면으로 볼 수 있어요.',
+  fork: {to: 'apart', text: '만약 그 새벽 민재가 집에 없었다면? 가족이 흩어졌을 때의 갈래를 7장면으로 볼 수 있어요.'},
   draw(c, t, T) {
     c.fillStyle = '#10161C'; c.fillRect(0, 0, W, H);
     c.fillStyle = '#16263A'; c.fillRect(980, 140, 440, 340);
@@ -414,7 +414,7 @@ const S = [
 },
 {
   when: 'D-Day · 밤 10시 40분 · 11층 집', title: '이번엔 지하가 아니다',
-  rejoin: true,
+  rejoin: 'apart',
   narr: '잠들 무렵 휴대폰이 다시 울렸다. 이번엔 사이렌이 아니라 재난문자와 아파트 방송이었다. 화생방경보. 정우가 반사적으로 현관으로 뛰었고, 서진이 그 팔을 붙잡았다. 화학 가스는 대부분 공기보다 무거워 지하처럼 낮은 곳에 고인다. 가족은 3층 박 할아버지를 계단으로 11층 집까지 모셔 오고, 안방 창틀과 문틈을 막았다. 1시간 40분 뒤, 화학 공격 정황이 없다는 해제 방송이 나왔다.',
   lines: [['msg', '[긴급재난문자] 화생방경보 발령. 화학 공격 의심. 지하로 대피하지 말고 높은 층 실내로 이동해 창문을 닫고 틈을 막으십시오.'], ['jw', '지하로 가야지!'], ['sj', '아빠, 이번엔 반대야. 가스는 아래로 가라앉아. 방송부터 끝까지 듣자.']],
   card: {title: '화생방경보가 울렸을 때', items: ['방송과 재난문자를 끝까지 듣기 · 화학 공격이면 지하가 아니라 높은 층 실내로', '핵·방사능 안내라면 반대로 지하나 건물 한가운데로 · 무엇인지는 안내를 따르기', '엘리베이터 말고 계단으로, 혼자 사는 이웃도 함께', '창문과 현관을 닫고 창틀·문틈을 비닐, 테이프, 젖은 수건으로 막기', '환풍기, 주방 후드, 에어컨 끄기', '방독면이 없으면 젖은 수건이나 마스크로 코와 입 가리기', '밖에 있던 사람은 겉옷을 비닐봉지에 묶어 두고 비누와 물로 씻기']},
@@ -448,6 +448,7 @@ const S = [
 },
 {
   when: 'D+1 · 아침 7시 40분 · 출발', title: '국도로, 다섯 명이 함께',
+  fork: {to: 'hospital', text: '만약 병원이 서진을 불렀다면? 가족이 각자 다른 곳에 남게 될 때의 갈래를 3장면으로 볼 수 있어요.'},
   narr: '라디오에서 정부 발표가 나왔다. 갈 곳이 있는 수도권 주민은 정해진 국도 경로로 남쪽 이동을 허용하고, 고속도로는 계속 통제한다는 내용이었다. 가족회의는 5분 만에 끝났다. 간다, 국도로 간다, 박 할아버지도 같이 간다. 평소 한 시간 거리가 네 시간 가까이 걸렸다.',
   lines: [['sy', '(단톡방) D+1 07:40 / 박달2동 출발 / 5명 무사 / 세이프 2로 이동']],
   card: {title: '차 안의 규칙', items: ['라디오는 계속 켜 두기', '휴대폰은 한 사람만, 나머지는 비행기 모드로 배터리 아끼기', '기름이 절반 아래로 떨어지기 전에, 줄이 짧은 주유소가 보이면 무조건 서기', '1시간마다 운전 교대', '창문을 조금 열어 사이렌 소리 확인', '군 차량 행렬이 오면 갓길로']},
@@ -629,8 +630,8 @@ const S = [
 }
 ];
 
-/* ---------- 갈래: 가족이 흩어졌을 때 (공습경보 장면에서 갈라져 그날 밤 화생방 장면으로 다시 합류) ---------- */
-const BR = [
+/* ---------- 갈래 1: 가족이 흩어졌을 때 (공습경보 장면에서 갈라져 그날 밤 화생방 장면으로 다시 합류) ---------- */
+const BR_APART = [
 {
   when: '갈래 · D-Day 새벽 4시 52분 · 역 앞 편의점', title: '집까지 20분, 지하까지 1분',
   narr: '이 갈래에서 민재는 그 주 역 앞 편의점에서 밤 아르바이트를 했다. 공습경보가 울렸을 때 가족은 집에, 민재는 혼자 거리에 있었다. 첫 생각은 집으로 뛰는 것이었다. 하지만 가족회의에서 정한 규칙은 분명했다. 밖에 있으면 집이 아니라 가장 가까운 지하로.',
@@ -698,10 +699,55 @@ const BR = [
   }
 },
 {
+  when: '갈래 · D-Day 오전 11시 · 역 앞 지하상가', title: '맨손으로 버틴 열 시간',
+  narr: '7시 10분, 지하상가에도 불이 나갔다. 비상등 아래에서 민재는 주머니를 뒤졌다. 비상 가방은 집 현관에 있었다. 가진 건 지갑과 배터리 23%짜리 휴대폰뿐이었다. 물은 옆 가게 사장님이 상자째 꺼내 나눠 주었다. 신호가 끊긴 휴대폰 대신, 민재는 지갑 속 종이를 보고 공중전화에 동전을 넣었다. 진안 외삼촌 집 번호였다.',
+  lines: [['mj', '삼촌, 민재예요. 역 앞 지하상가에 있고 무사해요. 해제되면 B구역 기둥으로 가요. 엄마한테 연락 오면 전해 주세요.'], ['uncle', '(전화) 알았다, 적어 둘게. 해제 전엔 절대 나오지 마라.']],
+  card: {title: '늘 몸에 지니는 최소 키트', items: ['연락처 적은 종이 · 지갑 속에', '소액 현금과 동전 · 카드 결제가 안 될 때, 공중전화 걸 때', '작은 보조배터리와 케이블', '물 한 병', '마스크와 하루치 복용약', '작은 손전등 · 휴대폰 불빛은 배터리를 빨리 쓴다', '휴대폰은 비행기 모드로 두고 정한 시간에만 켜기']},
+  draw(c, t, T, p) {
+    c.fillStyle = '#1E2326'; c.fillRect(0, 0, W, H); c.fillStyle = '#16191B'; c.fillRect(0, 0, W, 110);
+    for (let k = 0; k < 4; k++) { const x = 640 + k * 230; c.fillStyle = '#3A4045'; c.fillRect(x, 170, 200, 430); c.fillStyle = 'rgba(0,0,0,.25)'; for (let y = 184; y < 600; y += 16) c.fillRect(x, y, 200, 4); }
+    c.fillStyle = '#2A3034'; c.fillRect(0, 600, W, 300);
+    for (let x = 120; x < W; x += 420) { c.fillStyle = `rgba(60,220,120,${.55 + .2 * Math.sin(T * 2 + x)})`; c.fillRect(x, 96, 90, 14); }
+    const g = c.createRadialGradient(1100, 650, 40, 1100, 650, 520); g.addColorStop(0, 'rgba(200,255,220,.12)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    c.fillStyle = '#2F5E9E'; rr(c, 1330, 420, 120, 230, 10); c.fill(); c.fillStyle = '#C8D6E5'; c.fillRect(1350, 450, 80, 70); c.fillStyle = '#1B2A3A'; rr(c, 1352, 540, 40, 80, 8); c.fill();
+    txt(c, '공중전화', 1390, 405, {font: `700 26px ${FB}`, color: '#C8D6E5', align: 'center'});
+    c.fillStyle = '#8A6A44'; c.fillRect(860, 760, 150, 70); c.fillStyle = 'rgba(190,220,240,.85)'; for (let k = 0; k < 4; k++) c.fillRect(872 + k * 34, 730, 22, 36);
+    person(c, 760, 830, 1.1, '#8F8A6E', {sit: true});
+    person(c, 1290, 830, 1.15, CH.mj.c, {reach: true});
+    c.fillStyle = 'rgba(255,255,255,.94)'; rr(c, 60, 60, 540, 470, 18); c.fill();
+    txt(c, '민재 주머니 속', 90, 112, {font: `700 32px ${FB}`, color: '#263238'});
+    const inv = [['지갑 · 연락처 종이', '있음', 1], ['현금 2만 원 · 동전', '있음', 1], ['휴대폰', '배터리 23%', 2], ['물', '없음 → 나눠 받음', 2], ['보조배터리', '없음', 0], ['마스크 · 약', '없음', 0], ['손전등', '없음', 0]];
+    inv.forEach(([n, s, ok], k) => { if (clamp(p * 3 - k * .3) <= 0) return; const y = 170 + k * 50; txt(c, n, 90, y, {font: `500 26px ${FB}`, color: '#37474F'}); txt(c, s, 570, y, {font: `600 24px ${FB}`, color: ['#B03A25', '#2E7D4F', '#B9661B'][ok], align: 'right'}); });
+  }
+},
+{
+  when: '갈래 · D-Day 오후 3시 5분 · 역에서 박달2동까지', title: '큰길로, 만지지 말고',
+  narr: '오후 3시, 해제 방송이 나오자 민재는 지상으로 올라왔다. 버스는 다니지 않았다. 지름길 골목 대신 큰길을 골랐다. 사거리 한쪽에는 통제선이 쳐져 있었고, 경찰이 돌아가라고 손짓했다. 인도에 떨어진 금속 조각 앞에서 민재는 걸음을 멈췄다가, 만지지 않고 비켜 갔다.',
+  lines: [['police', '이쪽은 통제입니다. 큰길로 돌아가세요. 떨어진 물건은 만지지 마시고요.']],
+  card: {title: '공격 뒤 거리를 걸을 때', items: ['해제 방송을 확인한 뒤 출발', '지름길 골목보다 넓은 큰길로', '통제선과 경찰·공무원 안내 따르기', '금속 파편이나 불발탄으로 보이는 물체는 만지지 말고 112에 신고', '늘어진 전깃줄과 그 근처 물웅덩이 피하기', '금 간 건물과 깨진 유리창 아래 피하기, 연기 나는 쪽으로 가지 않기']},
+  draw(c, t, T, p) {
+    sky(c, [[0, '#A7ABA6'], [1, '#D8D0BC']]);
+    smoke(c, 1250, 520, T);
+    [[60, 260, 220, 520], [320, 320, 180, 460], [1080, 300, 200, 480], [1320, 240, 240, 540]].forEach(([x, y, w, h], i) => block(c, x, y, w, h, '#B3AD9F', 0, i + 3, 'rgba(60,70,75,.4)'));
+    c.strokeStyle = '#5A5550'; c.lineWidth = 4; c.beginPath(); c.moveTo(1120, 320); c.lineTo(1150, 400); c.lineTo(1130, 470); c.lineTo(1170, 560); c.stroke();
+    road(c, 600, 140, 0, 0);
+    c.fillStyle = '#8E8A7E'; c.fillRect(0, 740, W, 160);
+    c.save(); c.translate(300, 760); c.rotate(-.35); c.fillStyle = '#6B6358'; c.fillRect(-10, -330, 20, 330); c.restore();
+    c.strokeStyle = '#222'; c.lineWidth = 3; c.beginPath(); c.moveTo(186, 450); c.quadraticCurveTo(260, 820, 470, 790); c.stroke();
+    for (let x = 120; x < 560; x += 40) { c.fillStyle = (x / 40) % 2 ? '#E9B949' : '#222'; c.fillRect(x, 700, 40, 12); }
+    c.fillStyle = '#E07B39'; [[130, 740], [540, 740]].forEach(([x, y]) => { c.beginPath(); c.moveTo(x - 18, y); c.lineTo(x, y - 50); c.lineTo(x + 18, y); c.closePath(); c.fill(); });
+    person(c, 640, 860, 1.1, '#2F3E5A', {armUp2: true, hat: '#1E2A3E'});
+    c.fillStyle = '#55585C'; c.beginPath(); c.moveTo(930, 846); c.lineTo(975, 832); c.lineTo(990, 850); c.lineTo(950, 858); c.closePath(); c.fill();
+    txt(c, '만지지 않기', 960, 816, {font: `400 34px ${FH}`, color: '#B03A25', align: 'center'});
+    c.fillStyle = '#5B5B55'; c.fillRect(815, 530, 10, 70); sign(c, 700, 470, 240, 60, '#1F6E4C', '#fff', '큰길 →', 28);
+    const u = clamp(p); person(c, 760 + u * 520, 860, 1.15, CH.mj.c, {walk: u < 1 ? T * 7 : null});
+  }
+},
+{
   when: '갈래 · D-Day 오후 3시 40분 · 지하 2층 B구역', title: '기둥에 붙은 쪽지',
-  narr: '정전이 길어지자 휴대폰 신호마저 끊겼다. 열 시간 만에 경보가 해제됐고, 민재는 걸어서 집으로 향했다. 버스는 다니지 않았다. 큰길만 따라 40분을 걸었다. B구역 기둥에는 엄마 글씨의 쪽지가 테이프로 붙어 있었고, 그 아래 아빠가 앉아 있었다.',
+  narr: '40분을 걸어 지하 2층에 내려섰을 때, B구역 기둥에는 엄마 글씨의 쪽지가 테이프로 붙어 있었다. 그 아래 아빠가 앉아 있었다. 문자는 끝내 한 통도 오가지 못했다. 그래도 둘 다 약속을 알고 있었다.',
   lines: [['jw', '왔구나. 엄마랑 한 시간씩 교대로 여기 지키고 있었어.'], ['mj', '문자가 안 가서, 그냥 약속대로 왔어.']],
-  card: {title: '다시 만나는 법', items: ['경보 해제 뒤에 움직이기 · 걸어서 큰길로, 무너진 건물과 끊어진 전깃줄은 피해서', '1차 집결지 · 해제 후 6시간 안에 지하 2층 B구역 기둥', '기다리는 쪽은 교대로 자리를 지키기', '자리를 비울 땐 쪽지 · 누가, 몇 시에, 어디로 갔는지', '6시간이 지나도 못 만나면 2차 박달2동 주민센터로']},
+  card: {title: '다시 만나는 법', items: ['연락이 끊겨도 마지막으로 정한 약속대로 움직이기', '1차 집결지 · 해제 후 6시간 안에 지하 2층 B구역 기둥', '기다리는 쪽은 교대로 자리를 지키기', '자리를 비울 땐 쪽지 · 누가, 몇 시에, 어디로 갔는지', '6시간이 지나도 못 만나면 2차 박달2동 주민센터로']},
   draw(c, t, T, p) {
     parking(c, 0);
     c.fillStyle = 'rgba(4,6,8,.55)'; c.fillRect(0, 0, W, H);
@@ -717,7 +763,8 @@ const BR = [
 },
 {
   when: '갈래 · 만약 거기서도 못 만났다면', title: '약속은 세 겹으로',
-  narr: '이 가족은 1차 집결지에서 다시 만났다. 하지만 길이 막히거나 다쳐서 6시간 안에 못 오는 경우도 있다. 그래서 약속은 세 겹이었다. 2차는 박달2동 주민센터, 3차는 휴대폰이 없어도 닿는 진안 큰외삼촌 집 유선전화. 누구든 연락이 닿는 사람이 외삼촌에게 소식을 남기면, 외삼촌이 가족 모두의 소식을 모으는 연결점이 된다.',
+  narr: '이 가족은 1차 집결지에서 다시 만났다. 하지만 길이 막히거나 다쳐서 6시간 안에 못 오는 경우도 있다. 그래서 약속은 세 겹이었다. 2차는 박달2동 주민센터, 3차는 휴대폰이 없어도 닿는 진안 큰외삼촌 집 유선전화. 그날 민재가 낮에 걸어 둔 전화 덕분에, 외삼촌은 가족 중 누가 연락해 와도 민재 소식을 전해 줄 수 있었다.',
+  lines: [['uncle', '(진안, 그날 낮) 민재가 공중전화로 걸어왔더라. 무사하고, 해제되면 B구역으로 간대. 누구든 전화 오면 그대로 전해 줄게.']],
   card: {title: '세 겹 약속', items: ['1차 · 지하 2층 B구역 기둥 (해제 후 6시간 안)', '2차 · 박달2동 주민센터 · 명부와 게시판에 이름 남기기', '3차 · 진안 큰외삼촌 집 유선전화 · 번호는 지갑 속 종이에', '멀리 사는 친척 한 명을 소식 모으는 사람으로 미리 정해 두기', '대피소와 임시 거처의 명부에는 꼭 이름 올리기 · 가족을 찾는 단서가 된다']},
   draw(c, t, T, p) {
     c.fillStyle = '#1E2A30'; c.fillRect(0, 0, W, H);
@@ -740,25 +787,101 @@ const BR = [
 }
 ];
 
+/* ---------- 갈래 2: 서진이 병원에 남을 때 (D+1 출발 장면에서 갈라져 같은 장면으로 돌아옴) ---------- */
+const BR_HOSPITAL = [
+{
+  when: '갈래 · D+1 새벽 6시 · 11층 집 식탁', title: '부르는 곳이 두 군데',
+  narr: '새벽에 휴대폰 신호가 잠깐 돌아오자 밀려 있던 문자가 한꺼번에 들어왔다. 그중 하나가 병원에서 온 비상 근무 문자였다. 식탁에 둘러앉은 가족 앞에서 서진은 한참 휴대폰만 내려다봤다. 출발은 한 시간 반 뒤였다.',
+  lines: [['jw', '가족이 먼저야. 같이 가자.'], ['sj', '응급실에 사람이 없으면 어제 다친 사람들은 어디로 가? 나는 남을게.'], ['sy', '…그럼 약속부터 다시 정하자. 떨어져 있을 때의 약속.']],
+  card: {title: '가족이 각자 다른 곳에 남게 될 때', items: ['누가 어디에 남는지, 주소와 연락 방법을 종이에 적어 나눠 갖기', '연락 시간을 정하기 · 매일 저녁 8시, 진안 외삼촌 집 유선전화로', '남는 사람도 자기 비상 가방과 약을 따로 챙기기', '직장의 비상 연락망과 대피 장소를 확인하기', '동원 대상인지, 어떤 의무가 있는지는 법령과 소속 기관 안내로 확인']},
+  draw(c, t, T, p) {
+    c.fillStyle = '#2C3338'; c.fillRect(0, 0, W, H);
+    c.fillStyle = lin(c, 140, 460, [[0, '#3A4A66'], [1, '#C99A6E']]); c.fillRect(1060, 300, 400, 300);
+    c.strokeStyle = '#4A555C'; c.lineWidth = 14; c.strokeRect(1060, 300, 400, 300); c.beginPath(); c.moveTo(1260, 300); c.lineTo(1260, 600); c.stroke();
+    c.fillStyle = '#20262A'; c.fillRect(0, 760, W, 140);
+    person(c, 430, 840, 1.2, CH.jw.c, {sit: true});
+    person(c, 600, 840, 1.2, CH.sy.c, {sit: true, long: true});
+    person(c, 770, 840, 1.15, CH.pk.c, {sit: true, hat: '#4A4038'});
+    person(c, 1200, 840, 1.2, CH.mj.c, {sit: true, flip: true});
+    person(c, 1010, 840, 1.25, CH.sj.c, {item: '#DDEBFA'});
+    c.fillStyle = '#6B4F38'; rr(c, 380, 700, 900, 34, 8); c.fill(); c.fillRect(420, 734, 20, 110); c.fillRect(1220, 734, 20, 110);
+    c.fillStyle = 'rgba(255,255,255,.95)'; rr(c, 60, 56, 880, 190, 18); c.fill();
+    txt(c, '[수원 ○○병원] 05:52', 90, 104, {font: `700 30px ${FB}`, color: '#2D5B88'});
+    c.fillStyle = '#1B2220'; c.font = `500 26px ${FB}`; c.textAlign = 'left'; wrap(c, '응급의료센터는 전 직원 비상 근무 체제로 전환합니다. 가능한 인원은 오늘 중 복귀 바랍니다.', 90, 150, 820, 36);
+    if (p > .6) { txt(c, '남는다', 1010, 470, {font: `400 56px ${FH}`, color: '#5FA8BF', align: 'center'}); }
+  }
+},
+{
+  when: '갈래 · D+1 오전 9시 10분 · 수원 병원 앞', title: '여기까지만 같이',
+  narr: '남쪽으로 가는 길에 가족의 차는 수원 병원 앞에 잠깐 섰다. 응급의료센터 앞에는 구급차가 줄지어 있었다. 수연은 세이프 지점과 경로를 적은 종이를 한 장 더 베껴 서진의 가방에 넣었다. 서진은 뒤돌아보지 않고 들어갔다. 돌아보면 못 들어갈 것 같았다고, 나중에 말했다.',
+  lines: [['sy', '세이프 지점 목록이야. 우리가 어디쯤 있을지 알 수 있게.'], ['sj', '매일 저녁 8시에 병원 전화로 외삼촌 집에 걸게. 거기 소식 남겨 둬.']],
+  card: {title: '떨어져서 이동할 때', items: ['서로의 경로와 세이프 지점 목록을 나눠 갖기', '세이프 지점마다 남기는 형식은 그대로 · 이름 / 위치 / 상태 / 다음 행동', '휴대폰이 안 되면 정한 시간에 소식 모으는 사람에게 전화', '사흘 넘게 소식이 없으면 대피소와 병원의 명부로 찾기', '다시 만날 조건을 미리 정하기 · 휴전, 귀가 허용, 비상 근무 해제']},
+  draw(c, t, T, p) {
+    sky(c, [[0, '#B9C7CF'], [1, '#E6E3D8']]);
+    c.fillStyle = '#D9D4C8'; c.fillRect(780, 200, 760, 540);
+    for (let i = 0; i < 10; i++) for (let j = 0; j < 4; j++) { c.fillStyle = '#7F95A3'; c.fillRect(810 + i * 72, 240 + j * 86, 44, 54); }
+    c.fillStyle = '#B03A25'; c.fillRect(780, 590, 760, 60); txt(c, '응급의료센터', 1160, 632, {font: `700 34px ${FB}`, color: '#fff', align: 'center'});
+    c.fillStyle = '#2E3A40'; c.fillRect(1080, 650, 160, 90);
+    c.fillStyle = '#F2F2EE'; rr(c, 1300, 620, 200, 120, 10); c.fill(); rr(c, 1490, 650, 70, 90, 10); c.fill(); c.fillStyle = '#C0392B'; c.fillRect(1300, 676, 260, 14);
+    c.fillStyle = '#161A1C'; for (const x of [1350, 1500]) { c.beginPath(); c.arc(x, 745, 20, 0, 7); c.fill(); }
+    c.fillStyle = '#8E8A7E'; c.fillRect(0, 740, W, 160);
+    car(c, 330, 840, 1.1, '#3F5F86', {flip: true, lights: true});
+    sign(c, 60, 560, 280, 60, '#1F6E4C', '#fff', '← 남쪽 · 진안', 26);
+    person(c, 640, 860, 1.15, CH.sy.c, {long: true, reach: true});
+    const u = clamp(p); person(c, 770 + u * 300, 860, 1.15, CH.sj.c, {bag: '#5E6B45', walk: u < 1 ? T * 6 : null});
+  }
+},
+{
+  when: '갈래 · D+3 저녁 8시 · 수원 병원 지하', title: '저녁 8시의 전화',
+  narr: '병원은 진료 구역을 지하로 옮겼다. 서진은 이틀 동안 네 시간밖에 자지 못했다. 저녁 8시, 간호사실 유선전화로 진안 번호를 눌렀다. 신호가 두 번 가기도 전에 외삼촌이 받았다. 가족 넷은 어제 저녁 무사히 도착해 있었다.',
+  lines: [['uncle', '(전화) 다들 도착했다. 박 어르신까지 넷. 네 엄마 바꿔 줄게.'], ['sy', '(전화) 밥은 먹었어? 내일 8시에 또 여기서 기다릴게.'], ['sj', '응. 여긴 지하라 괜찮아. 다들 잘 있다고 전해 줘.']],
+  card: {title: '남는 사람이 지킬 것', items: ['근무 중에도 자기 대피 위치와 동선을 확인해 두기', '쉬는 시간에 물, 식사, 잠, 자기 약 챙기기 · 지치면 돕지 못한다', '약속한 시간에는 30초라도 연락 남기기', '언제, 어떤 조건이면 합류할지 가족에게 미리 말해 두기', '소식을 받는 쪽은 그 시간에 전화 곁을 지키기']},
+  draw(c, t, T, p) {
+    c.fillStyle = '#3E4A47'; c.fillRect(0, 0, W, H); c.fillStyle = '#2F3936'; c.fillRect(0, 0, W, 110);
+    for (let x = 100; x < W; x += 300) { c.fillStyle = `rgba(225,245,235,${.7 + .2 * Math.sin(T * 9 + x)})`; c.fillRect(x, 96, 150, 10); }
+    c.fillStyle = '#4C5955'; c.fillRect(0, 640, W, 260);
+    sign(c, 80, 170, 400, 60, '#2D5B88', '#fff', '임시 진료 구역 · 지하 1층', 26);
+    for (const x of [100, 470]) {
+      c.fillStyle = '#9AA3A6'; c.fillRect(x + 300, 470, 6, 300); c.fillStyle = 'rgba(220,235,240,.85)'; rr(c, x + 286, 470, 34, 50, 6); c.fill();
+      c.fillStyle = '#DCE3E2'; rr(c, x, 660, 280, 44, 10); c.fill(); c.fillStyle = '#8C9A97'; c.fillRect(x + 12, 704, 10, 80); c.fillRect(x + 258, 704, 10, 80);
+      lying(c, x + 250, 660, .75, '#9AA3A6');
+    }
+    c.fillStyle = '#F3F1EA'; c.beginPath(); c.arc(1300, 300, 60, 0, 7); c.fill(); c.strokeStyle = '#2A2622'; c.lineWidth = 6; c.lineCap = 'round';
+    const ha = 8 / 12 * Math.PI * 2 - Math.PI / 2; c.beginPath(); c.moveTo(1300, 300); c.lineTo(1300 + Math.cos(ha) * 32, 300 + Math.sin(ha) * 32); c.moveTo(1300, 300); c.lineTo(1300, 252); c.stroke();
+    c.fillStyle = '#6B5F52'; rr(c, 980, 610, 520, 70, 10); c.fill(); c.fillRect(1000, 680, 20, 100); c.fillRect(1460, 680, 20, 100);
+    c.fillStyle = '#2B2B2B'; rr(c, 1260, 584, 90, 30, 8); c.fill();
+    person(c, 1190, 840, 1.2, CH.sj.c, {armUp2: true});
+    c.fillStyle = 'rgba(255,255,255,.94)'; rr(c, 620, 170, 560, 120, 16); c.fill();
+    txt(c, '진안 큰외삼촌 집 · 유선전화', 650, 220, {font: `700 30px ${FB}`, color: '#263238'});
+    const sec = 20 + Math.floor(clamp(p) * 80); txt(c, `통화 중 ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, 650, 266, {font: `500 26px ${FB}`, color: '#2E7D4F'});
+  }
+}
+];
+
 /* ---------- 플레이어 ---------- */
 const $ = id => document.getElementById(id);
 const cv = $('cv'), ctx = cv.getContext('2d');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let i = 0, t = 0, T = 0, playing = false, ended = false, last = performance.now();
-/* 지금 보는 장면 목록: 본편(S) 또는 갈래(BR) */
-let seq = S, inBranch = false, segs = [];
-const FORK_AT = S.findIndex(s => s.fork), REJOIN = S.findIndex(s => s.rejoin);
+/* 갈래: 본편 장면의 fork.to 로 들어가고, 끝나면 rejoin 이 같은 장면(없으면 갈라진 장면)으로 돌아온다 */
+const BRANCHES = {
+  apart: {scenes: BR_APART, end: '가족은 다시 모였어요. 그날 밤 화생방경보 장면부터 본편이 이어져요.', btn: '본편으로 이어 보기'},
+  hospital: {scenes: BR_HOSPITAL, end: '본편에서는 서진이 가족과 함께 떠났어요. 출발 장면으로 돌아가요.', btn: '본편으로 돌아가기'},
+};
+for (const [id, b] of Object.entries(BRANCHES)) { b.forkAt = S.findIndex(s => s.fork && s.fork.to === id); const r = S.findIndex(s => s.rejoin === id); b.rejoin = r >= 0 ? r : b.forkAt; }
+/* 지금 보는 장면 목록: 본편(S) 또는 갈래 하나 */
+let seq = S, branch = null, segs = [];
 
 function dur(k) { const s = seq[k]; const len = (s.narr || '').length + (s.lines || []).reduce((a, l) => a + l[1].length, 0) + (s.card ? s.card.items.join('').length : 0); return Math.min(30, Math.max(9, 4 + len * .05)); }
 
 function buildSegs() {
   $('progress').replaceChildren();
-  seq.forEach((s, k) => { const b = document.createElement('button'); b.className = 'seg'; b.type = 'button'; b.setAttribute('aria-label', `${inBranch ? '갈래 ' : ''}${k + 1}번 장면: ${s.title}`); b.appendChild(document.createElement('i')); b.addEventListener('click', () => go(k, false)); $('progress').appendChild(b); });
+  seq.forEach((s, k) => { const b = document.createElement('button'); b.className = 'seg'; b.type = 'button'; b.setAttribute('aria-label', `${branch ? '갈래 ' : ''}${k + 1}번 장면: ${s.title}`); b.appendChild(document.createElement('i')); b.addEventListener('click', () => go(k, false)); $('progress').appendChild(b); });
   segs = [...$('progress').children];
 }
 buildSegs();
-function enterBranch() { inBranch = true; seq = BR; buildSegs(); go(0, playing); }
-function leaveBranch(k) { inBranch = false; seq = S; buildSegs(); go(k, playing); }
+function enterBranch(id) { branch = BRANCHES[id]; seq = branch.scenes; buildSegs(); go(0, playing); }
+function leaveBranch(k) { branch = null; seq = S; buildSegs(); go(k, playing); }
 
 function renderCaption(animate) {
   const s = seq[i], cap = $('caption');
@@ -771,17 +894,17 @@ function renderCaption(animate) {
   const card = $('card');
   if (s.card) { card.hidden = false; cap.classList.remove('solo'); $('cardTitle').textContent = s.card.title; const ol = $('cardItems'); ol.replaceChildren(); s.card.items.forEach((it, k) => { const li = document.createElement('li'); li.style.setProperty('--d', (1.5 + k * 1).toFixed(1)); li.textContent = it; ol.append(li); }); }
   else { card.hidden = true; cap.classList.add('solo'); }
-  const fork = $('fork'), atEnd = inBranch && i === seq.length - 1;
-  fork.hidden = !(atEnd || (!inBranch && s.fork));
-  if (atEnd) { $('forkText').textContent = '가족은 다시 모였어요. 그날 밤 화생방경보 장면부터 본편이 이어져요.'; $('forkBtn').textContent = '본편으로 이어 보기'; }
-  else if (!fork.hidden) { $('forkText').textContent = s.fork; $('forkBtn').textContent = '갈래 보기'; }
-  $('back').hidden = !inBranch;
-  $('count').textContent = `${inBranch ? '갈래 ' : ''}${i + 1} / ${seq.length}`;
+  const fork = $('fork'), atEnd = branch && i === seq.length - 1;
+  fork.hidden = !(atEnd || (!branch && s.fork));
+  if (atEnd) { $('forkText').textContent = branch.end; $('forkBtn').textContent = branch.btn; }
+  else if (!fork.hidden) { $('forkText').textContent = s.fork.text; $('forkBtn').textContent = '갈래 보기'; }
+  $('back').hidden = !branch;
+  $('count').textContent = `${branch ? '갈래 ' : ''}${i + 1} / ${seq.length}`;
 }
 function go(k, auto) { i = clamp(k, 0, seq.length - 1); t = 0; ended = false; renderCaption(auto); syncSound(); updateButtons(); }
 function updateButtons() { $('play').textContent = ended ? '처음부터' : playing ? '일시정지' : '재생'; $('prev').disabled = i === 0; $('next').disabled = i === seq.length - 1; }
-$('forkBtn').addEventListener('click', () => inBranch ? leaveBranch(REJOIN) : enterBranch());
-$('back').addEventListener('click', () => leaveBranch(FORK_AT));
+$('forkBtn').addEventListener('click', () => branch ? leaveBranch(branch.rejoin) : enterBranch(seq[i].fork.to));
+$('back').addEventListener('click', () => leaveBranch(branch.forkAt));
 function togglePlay() { if (ended) { playing = true; go(0, true); return; } playing = !playing; if (playing && t === 0) renderCaption(true); syncSound(); updateButtons(); }
 
 /* 사이렌 소리: 사용자가 켰을 때만, 재생 중인 경보 장면에서만 */
@@ -803,7 +926,7 @@ new ResizeObserver(resize).observe(cv); resize();
 function frame(now) {
   const dt = Math.min(.1, (now - last) / 1000); last = now;
   if (!reduce) T += dt;
-  if (playing) { t += dt; if (t >= dur(i)) { if (i < seq.length - 1) go(i + 1, true); else if (inBranch) leaveBranch(REJOIN); else { playing = false; ended = true; t = dur(i); syncSound(); updateButtons(); } } }
+  if (playing) { t += dt; if (t >= dur(i)) { if (i < seq.length - 1) go(i + 1, true); else if (branch) leaveBranch(branch.rejoin); else { playing = false; ended = true; t = dur(i); syncSound(); updateButtons(); } } }
   const d = dur(i), p = reduce || (!playing && t === 0) ? 1 : clamp(t / (d * .6));
   ctx.setTransform(scale, 0, 0, scale, 0, 0); ctx.clearRect(0, 0, W, H);
   try { seq[i].draw(ctx, reduce ? d : t, reduce ? 0 : T, p); } catch (err) { console.error(err); }
