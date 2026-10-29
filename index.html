@@ -7,15 +7,29 @@
 /* Layout: 한 편의 영상처럼 위에 16:9 무대, 아래에 자막과 행동 카드가 이어지는 단일 칼럼 플레이어 */
 :root{
   --bg:#E8ECE7; --surface:#F6F7F4; --fg:#1B2220; --muted:#55615C; --line:#C4CCC6;
-  --accent:#B9661B; --accent-ink:#FFFFFF; --alert:#B03A25;
+  --accent:#B9661B; --accent-ink:#FFFFFF; --alert:#B03A25; --ok:#2E7D4F;
   --f-display:"Gowun Batang","Noto Serif KR","Batang",serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --f-hand:"Nanum Pen Script","Gowun Batang",cursive;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){--bg:#111614;--surface:#1A201E;--fg:#E3E8E5;--muted:#98A49F;--line:#2D3532;--accent:#E3913F;--accent-ink:#1A1208;--alert:#E2654D;color-scheme:dark}
+  :root:not([data-theme="light"]){--bg:#111614;--surface:#1A201E;--fg:#E3E8E5;--muted:#98A49F;--line:#2D3532;--accent:#E3913F;--accent-ink:#1A1208;--alert:#E2654D;--ok:#6CC08F;color-scheme:dark}
 }
-:root[data-theme="dark"]{--bg:#111614;--surface:#1A201E;--fg:#E3E8E5;--muted:#98A49F;--line:#2D3532;--accent:#E3913F;--accent-ink:#1A1208;--alert:#E2654D;color-scheme:dark}
+:root[data-theme="dark"]{--bg:#111614;--surface:#1A201E;--fg:#E3E8E5;--muted:#98A49F;--line:#2D3532;--accent:#E3913F;--accent-ink:#1A1208;--alert:#E2654D;--ok:#6CC08F;color-scheme:dark}
+/* 선택형: 결정 장면에서 고르기 */
+.choice{display:flex;flex-direction:column;gap:12px}
+.choice > .btn{align-self:flex-start}
+.choice .q{font-family:var(--f-display);font-size:1.1rem;line-height:1.8;max-width:62ch;margin:0}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:500 1rem/1.5 var(--f-body);text-align:left;padding:12px 14px;min-height:46px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt.no{opacity:.55;text-decoration:line-through;cursor:default}
+.opt.yes{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.fb{margin:0;padding:10px 14px;border-radius:8px;font-size:.95rem;line-height:1.7;max-width:62ch}
+.fb.bad{background:color-mix(in srgb, var(--alert) 12%, transparent);border-left:4px solid var(--alert)}
+.fb.good{background:color-mix(in srgb, var(--ok) 14%, transparent);border-left:4px solid var(--ok)}
+.score{font:600 .85rem var(--f-body);color:var(--accent);font-variant-numeric:tabular-nums}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6}
 .wrap{max-width:1040px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:16px}
 header{display:flex;flex-direction:column;gap:2px}
@@ -80,6 +94,8 @@ h2{font:700 1.45rem/1.35 var(--f-display);margin:2px 0 10px;text-wrap:balance}
     <button class="btn" id="next" type="button">다음</button>
     <button class="btn" id="sound" type="button" aria-pressed="false">사이렌 소리 꺼짐</button>
     <button class="btn" id="back" type="button" hidden>본편으로</button>
+    <button class="btn" id="choiceMode" type="button" aria-pressed="false">선택형 꺼짐</button>
+    <span class="score" id="score" hidden></span>
     <span class="count" id="count">1 / 24</span>
     <div class="progress" id="progress"></div>
   </div>
@@ -90,6 +106,12 @@ h2{font:700 1.45rem/1.35 var(--f-display);margin:2px 0 10px;text-wrap:balance}
       <h2 id="title"></h2>
       <p class="narr" id="narr"></p>
       <ul class="lines" id="lines"></ul>
+      <div class="choice" id="choice" hidden>
+        <p class="q" id="choiceQ"></p>
+        <div class="opts" id="choiceOpts" role="group" aria-label="고르기"></div>
+        <p class="fb" id="choiceFb" hidden></p>
+        <button class="btn primary" id="choiceGo" type="button" hidden>장면 이어 보기</button>
+      </div>
       <div class="fork" id="fork" hidden><p id="forkText"></p><button class="btn primary" id="forkBtn" type="button"></button></div>
     </div>
     <aside class="card" id="card">
@@ -1336,6 +1358,46 @@ const BR_RETURN = [
 }
 ];
 
+/* ---------- 선택형: 결정 장면마다 먼저 고르고, 고른 뒤에 장면을 본다 ---------- */
+const CHOICES = {
+  '차 키 대신 지하로': {q: '새벽 4시 52분, 공습경보가 울렸어요. 가족은 아침에 출발할 생각이었어요. 무엇부터 할까요?', options: [
+    {t: '차 키를 챙겨 바로 남쪽으로 출발한다', ok: false, why: '공격 직후의 도로는 곧 막히고, 지상의 차 안은 피할 곳이 없는 상자예요. 장거리 이동보다 가까운 대피소가 먼저예요.'},
+    {t: '계단으로 아파트 지하 대피소에 내려간다', ok: true, why: '계획서 첫 장에 적은 그대로예요. 가까운 지하가 먼저, 엘리베이터 말고 계단으로.'},
+    {t: '엘리베이터를 타고 빨리 지하로 간다', ok: false, why: '정전이 되면 엘리베이터 안에 갇힐 수 있어요. 박 할아버지 말처럼 계단으로 가야 해요.'}]},
+  '오늘은 떠나지 않는다': {q: '열 시간 만에 공습경보가 해제됐어요. 고속도로는 일부 통제 중이라는 안내가 나왔어요. 어떻게 할까요?', options: [
+    {t: '해제됐으니 지금 바로 남쪽으로 출발한다', ok: false, why: '지금 나가면 통제된 도로 위에 갇혀요. 이동은 정부가 허용하고 경로가 확인된 뒤에 해요.'},
+    {t: '피해가 어떤지 혼자 밖에 나가 둘러본다', ok: false, why: '해제 직후 거리에는 잔해와 통제 구간이 남아 있어요. 필요 없는 외출은 하지 않아요.'},
+    {t: '오늘은 집 안쪽 방에서 지내며 안내를 기다린다', ok: true, why: '창문에서 떨어진 방에서 물을 받아 두고, 경보가 다시 울리면 지하로 내려가요.'}]},
+  '이번엔 지하가 아니다': {q: '밤 10시 40분, 화생방경보와 함께 "화학 공격 의심" 안내가 나왔어요. 어디로 갈까요?', options: [
+    {t: '공습 때처럼 지하 대피소로 내려간다', ok: false, why: '화학 가스는 대부분 공기보다 무거워 지하처럼 낮은 곳에 고여요. 이번엔 반대예요.'},
+    {t: '집 밖으로 나가 차를 타고 이 지역을 벗어난다', ok: false, why: '밖으로 나가면 오염된 공기에 그대로 노출될 수 있어요. 안내가 높은 층 실내를 말하면 그대로 따라요.'},
+    {t: '높은 층 실내에서 창문과 틈을 막는다', ok: true, why: '높은 층의 방에서 창틀과 문틈을 막고 환풍기와 에어컨을 꺼요. 안내는 끝까지 듣고 따라요.'}]},
+  '피할 곳이 없으면 낮은 곳으로': {q: '국도 한가운데서 경계경보가 울렸어요. 근처에 지하시설은 없어요. 어떻게 할까요?', options: [
+    {t: '갓길에 세우고 내려서, 낮고 단단한 구조물 옆에 엎드린다', ok: true, why: '도로에서 벗어나 배수로의 콘크리트 수로관 옆처럼 낮고 단단한 곳에서 머리와 목을 감싸요.'},
+    {t: '차 안에서 창문을 닫고 기다린다', ok: false, why: '도로 위의 차는 피할 곳이 없는 상자예요. 차에서 내려 도로를 벗어나요.'},
+    {t: '속도를 높여 다음 마을까지 간다', ok: false, why: '경보 중에 달리는 차는 사고 위험이 크고, 도로는 군 차량이 써야 할 수도 있어요.'}]},
+  '면사무소와 마을회관': {q: '오후 4시 30분, 해 지기 전에 다음 세이프 지점에 닿기는 어려워 보여요. 어떻게 할까요?', options: [
+    {t: '마을회관에 묵고, 교대로 깨어 라디오를 듣는다', ok: true, why: '해 지기 전에 닿을 수 있는지가 묵을지 정하는 기준이에요. 쉬는 것도 계획이에요.'},
+    {t: '밤새 운전해서라도 오늘 더 간다', ok: false, why: '야간 운전은 사고 위험이 크고, 등화관제가 내려질 수도 있어요.'}]},
+  '집까지 20분, 지하까지 1분': {q: '새벽 4시 52분, 민재는 혼자 역 앞 편의점에 있어요. 공습경보가 울려요. 민재는?', options: [
+    {t: '가족이 걱정돼 집까지 뛰어간다', ok: false, why: '20분 동안 거리에 있게 돼요. 가족도 각자 정한 곳으로 간다고 믿고, 가까운 지하로 먼저 가요.'},
+    {t: '바로 앞 지하상가로 내려간다', ok: true, why: '밖에 있으면 집이 아니라 가장 가까운 지하로. 가족회의에서 정한 규칙이에요.'}]},
+  '찾으러 가지 않는다': {q: '정전 뒤 민재에게 보낸 문자가 모두 실패했어요. 경보는 아직 해제되지 않았어요. 가족은?', options: [
+    {t: '정한 집결지를 지키며 해제를 기다린다', ok: true, why: '민재는 마지막 문자대로 B구역 기둥으로 올 거예요. 찾아오는 쪽은 약속한 곳으로 와요.'},
+    {t: '정우가 손전등을 들고 역까지 데리러 간다', ok: false, why: '경보 중에 나가면 밖에서 기다려야 할 사람이 둘이 돼요.'}]},
+  '차는 여기까지': {q: '다리가 통제됐어요. 돌아가는 국도는 2시간이 넘게 걸리고, 기름은 4분의 1, 해는 2시간 안에 져요. 건너편에는 외삼촌이 트럭을 대 놓을 수 있어요.', options: [
+    {t: '국도로 돌아간다', ok: false, why: '기름이 모자라 밤에 길 위에서 멈출 수 있어요.'},
+    {t: '차단봉 옆으로 차를 몰아 다리를 건넌다', ok: false, why: '손상된 다리를 막은 데는 이유가 있어요. 통제 요원의 안내를 따라요.'},
+    {t: '차를 공터에 세우고 걸어서 건넌다', ok: true, why: '남은 기름, 남은 해, 걸을 거리를 함께 따져 보면 가장 안전한 길이에요.'}]},
+  '따뜻함보다 공기가 먼저': {q: '화목 난로를 처음 피운 밤, 박 할아버지와 민재가 함께 두통과 메스꺼움을 호소해요. 어떻게 할까요?', options: [
+    {t: '감기 같으니 약을 먹고 일찍 재운다', ok: false, why: '여럿이 함께 두통, 어지럼, 메스꺼움을 느끼면 일산화탄소부터 의심해요. 잠들면 더 위험해요.'},
+    {t: '창문을 열고 모두 밖으로 나간다', ok: true, why: '먼저 환기하고 밖으로 나가요. 원인을 찾을 때까지 난로를 쓰지 않아요.'}]},
+  '세 번째 동그라미': {q: '귀가 허용 발표가 나왔어요. 민재는 지금 바로 가자고 해요. 어떻게 할까요?', options: [
+    {t: '하루 더 확인하고 출발 날짜를 정한다', ok: true, why: '관리사무소와 주민센터에 집 상태를 묻고, 가는 길과 주유소를 확인한 뒤 움직여요.'},
+    {t: '오늘 바로 짐을 싸서 출발한다', ok: false, why: '우리 동네가 맞는지, 집과 길이 어떤지 모른 채 첫날 몰리면 길에서 막혀요.'}]},
+};
+for (const list of [S, BR_APART, BR_WALK, BR_LONG, BR_RETURN]) list.forEach(s => { if (CHOICES[s.title]) s.choice = CHOICES[s.title]; });
+
 /* ---------- 플레이어 ---------- */
 const $ = id => document.getElementById(id);
 const cv = $('cv'), ctx = cv.getContext('2d');
@@ -1349,7 +1411,7 @@ const BRANCHES = {
   long: {scenes: BR_LONG, end: '100일째, 돌아갈 조건은 아직 다 채워지지 않았어요. 그날의 이야기는 에필로그 아래 복귀편 버튼으로 이어져요.', btn: '에필로그로 가기'},
   return: {scenes: BR_RETURN, label: '복귀편', open: '복귀편 보기', end: '복귀편이 끝났어요. 에필로그로 돌아가요.', btn: '에필로그로 돌아가기'},
 };
-for (const [id, b] of Object.entries(BRANCHES)) { b.forkAt = S.findIndex(s => s.fork && s.fork.to === id); const r = S.findIndex(s => s.rejoin === id); b.rejoin = r >= 0 ? r : b.forkAt; }
+for (const [id, b] of Object.entries(BRANCHES)) { b.id = id; b.forkAt = S.findIndex(s => s.fork && s.fork.to === id); const r = S.findIndex(s => s.rejoin === id); b.rejoin = r >= 0 ? r : b.forkAt; }
 /* 지금 보는 장면 목록: 본편(S) 또는 갈래 하나 */
 let seq = S, branch = null, segs = [];
 
@@ -1364,11 +1426,47 @@ buildSegs();
 function enterBranch(id) { branch = BRANCHES[id]; seq = branch.scenes; buildSegs(); go(0, playing); }
 function leaveBranch(k) { branch = null; seq = S; buildSegs(); go(k, playing); }
 
+/* 선택형 상태: 장면마다 고른 기록. 켤 때마다 새로 시작한다 */
+let choiceOn = false, answers = {};
+try { choiceOn = localStorage.getItem('south-choice') === '1'; } catch (e) {}
+const ckey = () => `${branch ? branch.id : 'main'}:${seq[i].title}`;
+const pending = () => choiceOn && !!seq[i].choice && !(answers[ckey()] && answers[ckey()].done);
+function shuffled(n) { const a = [...Array(n).keys()]; for (let k = n - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+function renderChoice() {
+  const s = seq[i], key = ckey(), a = answers[key] || (answers[key] = {tried: [], first: null, right: false, done: false, order: shuffled(s.choice.options.length)});
+  $('choiceQ').textContent = s.choice.q;
+  const box = $('choiceOpts'); box.replaceChildren();
+  a.order.forEach(k => { const o = s.choice.options[k], b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o.t;
+    if (a.tried.includes(k)) { b.disabled = true; b.classList.add('no'); }
+    if (a.right && o.ok) b.classList.add('yes');
+    if (a.right) b.disabled = true;
+    b.addEventListener('click', () => pick(k)); box.append(b); });
+  const fb = $('choiceFb'), last = a.right ? s.choice.options.find(o => o.ok) : a.tried.length ? s.choice.options[a.tried[a.tried.length - 1]] : null;
+  fb.hidden = !last; if (last) { fb.className = 'fb ' + (a.right ? 'good' : 'bad'); fb.textContent = (a.right ? '좋은 선택이에요. ' : '그렇게 하면 위험해요. ') + last.why + (a.right ? '' : ' 다른 것을 골라 보세요.'); }
+  $('choiceGo').hidden = !a.right;
+}
+function pick(k) {
+  const a = answers[ckey()], o = seq[i].choice.options[k];
+  if (a.first === null) a.first = o.ok;
+  if (o.ok) a.right = true; else a.tried.push(k);
+  renderChoice(); updateScore();
+  (a.right ? $('choiceGo') : $('choiceOpts').querySelector('.opt:not(:disabled)'))?.focus();
+}
+$('choiceGo').addEventListener('click', () => { answers[ckey()].done = true; t = 0; renderCaption(true); });
+function updateScore() {
+  const done = Object.values(answers).filter(a => a.first !== null), first = done.filter(a => a.first).length;
+  $('score').hidden = !choiceOn; $('score').textContent = `처음에 맞힘 ${first} / ${done.length}`;
+  $('choiceMode').setAttribute('aria-pressed', String(choiceOn)); $('choiceMode').textContent = choiceOn ? '선택형 켜짐' : '선택형 꺼짐';
+}
+$('choiceMode').addEventListener('click', () => { choiceOn = !choiceOn; answers = {}; try { localStorage.setItem('south-choice', choiceOn ? '1' : '0'); } catch (e) {} t = 0; renderCaption(false); updateScore(); });
+
 function renderCaption(animate) {
-  const s = seq[i], cap = $('caption');
+  const s = seq[i], cap = $('caption'), pend = pending();
   cap.classList.remove('animate'); void cap.offsetWidth; if (animate && !reduce) cap.classList.add('animate');
-  $('chip').textContent = s.when; $('eyebrow').textContent = s.when; $('title').textContent = s.title; $('narr').textContent = s.narr;
-  cv.setAttribute('aria-label', `${s.when}, ${s.title}`);
+  $('chip').textContent = s.when; $('eyebrow').textContent = s.when; $('title').textContent = pend ? '결정의 순간' : s.title; $('narr').textContent = s.narr;
+  cv.setAttribute('aria-label', pend ? `${s.when}, 결정의 순간` : `${s.when}, ${s.title}`);
+  $('choice').hidden = !pend; $('narr').hidden = pend;
+  if (pend) { renderChoice(); $('lines').hidden = true; $('card').hidden = true; cap.classList.add('solo'); $('fork').hidden = true; $('back').hidden = !branch; $('count').textContent = `${branch ? (branch.label || '갈래') + ' ' : ''}${i + 1} / ${seq.length}`; return; }
   const ul = $('lines'); ul.replaceChildren();
   (s.lines || []).forEach(([who, say], k) => { const li = document.createElement('li'); li.style.setProperty('--d', (1 + k * 2.2).toFixed(1)); const w = document.createElement('span'); w.className = 'who'; w.style.setProperty('--c', CH[who].c); w.textContent = CH[who].name; const q = document.createElement('span'); q.className = 'say'; q.textContent = say; li.append(w, q); ul.append(li); });
   ul.hidden = !(s.lines && s.lines.length);
@@ -1407,14 +1505,15 @@ new ResizeObserver(resize).observe(cv); resize();
 function frame(now) {
   const dt = Math.min(.1, (now - last) / 1000); last = now;
   if (!reduce) T += dt;
-  if (playing) { t += dt; if (t >= dur(i)) { if (i < seq.length - 1) go(i + 1, true); else if (branch) leaveBranch(branch.rejoin); else { playing = false; ended = true; t = dur(i); syncSound(); updateButtons(); } } }
+  if (playing && !pending()) { t += dt; if (t >= dur(i)) { if (i < seq.length - 1) go(i + 1, true); else if (branch) leaveBranch(branch.rejoin); else { playing = false; ended = true; t = dur(i); syncSound(); updateButtons(); } } }
   const d = dur(i), p = reduce || (!playing && t === 0) ? 1 : clamp(t / (d * .6));
   ctx.setTransform(scale, 0, 0, scale, 0, 0); ctx.clearRect(0, 0, W, H);
   try { seq[i].draw(ctx, reduce ? d : t, reduce ? 0 : T, p); } catch (err) { console.error(err); }
+  if (pending()) { ctx.fillStyle = 'rgba(8,12,11,.96)'; ctx.fillRect(0, 0, W, H); txt(ctx, '어떻게 할까요?', W / 2, 420, {font: `700 88px ${FD}`, color: '#F3EBDD', align: 'center'}); txt(ctx, '아래에서 하나를 골라 주세요', W / 2, 500, {font: `500 34px ${FB}`, color: '#C9D4D0', align: 'center'}); }
   segs.forEach((b, k) => { b.firstChild.style.width = (k < i ? 100 : k === i ? clamp(t / d) * 100 : 0) + '%'; });
   requestAnimationFrame(frame);
 }
-go(0, false);
+go(0, false); updateScore();
 requestAnimationFrame(frame);
 </script>
 
