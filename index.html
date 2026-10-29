@@ -544,6 +544,7 @@ const S = [
 },
 {
   when: 'D+2 · 오후 4시 10분 · 세이프 5', title: '고개 아래 휴게소',
+  fork: {to: 'walk', text: '만약 고개 너머 다리가 통제됐다면? 차를 두고 걸어서 가는 갈래를 4장면으로 볼 수 있어요.'},
   narr: '길은 점점 산으로 들어갔다. 단풍이 들기 시작한 산이 이어졌고, 그 풍경이 너무 평화로워서 오히려 낯설었다. 휴게소 주유소는 문을 닫았지만 매점은 발전기를 돌리고 있었다. 이 근처는 휴대폰 신호가 약해서, 수연은 휴게소 유선전화를 빌렸다.',
   lines: [['uncle', '마을 입구에 트럭 세워 둘게. 길 헷갈리면 거기서 기다려.']],
   card: {title: '세이프 5에서 할 일', items: ['마지막 판단 · 해 지기까지 2시간, 남은 거리 1시간, 고개 도로 양호 → 오늘 도착', '기름 4분의 1 · 도착 후 주유가 어려우니 비상용으로 아끼기', '마지막 연락 "D+2 16:20 / 세이프 5 / 5명 무사 / 17:30 도착 예정"']},
@@ -579,6 +580,7 @@ const S = [
 },
 {
   when: 'D+3 ~ D+7 · 피난지', title: '피난민이 아니라 식구로',
+  rejoin: 'walk',
   narr: '도착은 끝이 아니었다. 이곳에서도 공습경보는 울릴 수 있다. 가족은 첫날 밤부터 피난지에서 지킬 규칙을 정했다. 정우와 민재는 장작을 패고 밭일을 거들었고, 서진은 일손이 모자라던 면 보건지소에 자원봉사를 신청했다.',
   card: {title: '피난지 생활 규칙', items: ['하루 세 번(7시, 12시, 19시) 라디오 정시 뉴스를 듣고 기록. 소문은 적지 않기', '근처 임시 대피 장소 확인 · 마을회관 옆 저온 저장고, 뒷산 콘크리트 수로', '우물물은 끓여 마시고, 일주일 단위로 남은 식량 계산', '장작 패기와 밭일 거들기, 서진은 보건지소 자원봉사', '혈압약 남은 양 확인, 보건지소로 처방 이어 가기', '지인과 회사, 박 할아버지 조카에게 무사하다고 알리기']},
   draw(c, t, T) {
@@ -858,6 +860,97 @@ const BR_HOSPITAL = [
 }
 ];
 
+/* ---------- 갈래 3: 차를 두고 걸을 때 (세이프 5에서 갈라져 피난지 생활 장면으로 합류) ---------- */
+const BR_WALK = [
+{
+  when: '갈래 · D+2 오후 4시 30분 · 고개 너머 다리 앞', title: '차는 여기까지',
+  narr: '휴게소를 떠나 20분, 고개를 넘자 다리 앞에 차단봉이 내려와 있었다. 교량이 손상돼 차량은 지나갈 수 없고, 사람만 옆 농로로 건너갈 수 있었다. 돌아가는 국도는 두 시간이 넘게 걸리는데 기름은 4분의 1뿐이었다. 정우는 휴게소에서 외워 둔 외삼촌 말을 떠올렸다. 길 헷갈리면 마을 입구에서 기다리겠다고 했다.',
+  lines: [['officer', '차량은 못 지나갑니다. 걸어서는 옆 농로로 건너갈 수 있어요.'], ['jw', '돌아가면 기름이 모자라. 해 지기 전에 걸어서 넘자.'], ['uncle', '(통제소 전화) 다리 건너 마을 입구에 트럭 대 놓을게. 3킬로쯤 될 거다.']],
+  card: {title: '차를 두고 떠날 때', items: ['돌아갈 기름, 남은 해, 걸을 거리를 함께 따져 결정하기', '길을 막지 않게 공터나 갓길 밖에 세우기', '차 안에 쪽지 남기기 · 이름, 연락처, 간 곳', '통제 요원이 차량 처리를 안내하면 그대로 따르기', '차에 두고 가는 짐 목록을 적어 두기']},
+  draw(c, t, T, p) {
+    sky(c, [[0, '#5C4E7C'], [.55, '#E08A5A'], [1, '#F4C27A']]);
+    ridge(c, 470, 150, '#9B5233', 6, 0); ridge(c, 560, 140, '#7A3F2A', 8, 0);
+    c.fillStyle = '#5A4334'; c.fillRect(0, 700, W, 200);
+    c.fillStyle = '#8E8A80'; c.fillRect(1100, 600, 500, 40); c.fillStyle = '#6E6A62'; for (let x = 1120; x < W; x += 90) c.fillRect(x, 640, 14, 70);
+    c.fillStyle = '#2A1E18'; c.beginPath(); c.moveTo(1330, 598); c.lineTo(1400, 598); c.lineTo(1380, 642); c.lineTo(1345, 642); c.closePath(); c.fill();
+    road(c, 640, 120, 0, 0);
+    for (let x = 1000; x < 1200; x += 40) { c.fillStyle = (x / 40) % 2 ? '#E9B949' : '#B03A25'; c.fillRect(x, 612, 40, 18); }
+    sign(c, 960, 470, 300, 60, '#B03A25', '#fff', '차량 통행 금지', 26);
+    sign(c, 600, 520, 260, 56, '#1F6E4C', '#fff', '보행 우회로 ↘', 24);
+    car(c, 520, 740, 1, '#3F5F86', {lights: true});
+    person(c, 760, 760, 1.05, CH.jw.c, {flip: true});
+    person(c, 900, 760, 1.05, '#5E6B6A', {armUp2: true, hat: '#3A4442'});
+    c.fillStyle = 'rgba(255,255,255,.94)'; rr(c, 60, 56, 700, 250, 18); c.fill();
+    txt(c, '어떻게 갈까', 90, 106, {font: `700 32px ${FB}`, color: '#263238'});
+    [['돌아가는 국도', '2시간 넘게 · 기름 1/4 · 해 진 뒤 도착', '#B03A25'], ['걸어서 다리 건너기', '3km · 1시간 남짓 · 건너편에 외삼촌 트럭', '#2E7D4F']].forEach(([a, b, col], k) => { if (clamp(p * 2.5 - k * .8) <= 0) return; const y = 160 + k * 80; txt(c, a, 90, y, {font: `700 28px ${FB}`, color: col}); txt(c, b, 90, y + 36, {font: `500 24px ${FB}`, color: '#37474F'}); });
+  }
+},
+{
+  when: '갈래 · D+2 오후 4시 45분 · 다리 앞 공터', title: '들 수 있는 만큼만',
+  narr: '차는 길을 막지 않게 공터 안쪽에 세웠다. 수연이 트렁크를 열고 짐을 두 무더기로 나눴다. 가져갈 것과 두고 갈 것. 기준은 하나였다. 두 손을 비운 채 한 시간을 걸을 수 있을 만큼. 박 할아버지의 짐은 민재가 나눠 들었다. 앞 유리 안쪽에는 이름과 외삼촌 집 번호를 적은 쪽지를 붙였다.',
+  lines: [['sy', '여행 가방은 두고 가자. 물이랑 약이 먼저야.'], ['mj', '할아버지 가방은 제가 멜게요. 지팡이만 짚으세요.']],
+  card: {title: '걸을 때 짐 꾸리기', items: ['물과 약, 신분증·현금·연락처 종이가 먼저', '등에 메서 두 손은 비우기', '노약자의 짐은 나눠 들기', '무겁고 나중에 다시 구할 수 있는 것은 두고 가기', '손전등은 꺼내기 쉬운 곳에 · 해가 지기 전에 확인', '편한 운동화로 갈아 신기']},
+  draw(c, t, T, p) {
+    sky(c, [[0, '#4A3F66'], [.6, '#D07A4E'], [1, '#EBB070']]);
+    ridge(c, 520, 140, '#6E3A2A', 8, 0);
+    c.fillStyle = '#4E3B2E'; c.fillRect(0, 640, W, 260);
+    car(c, 800, 800, 1.3, '#3F5F86');
+    c.fillStyle = '#FBF7EC'; c.fillRect(812, 708, 30, 22);
+    person(c, 600, 850, 1.1, CH.sy.c, {long: true, kneel: true, reach: true});
+    person(c, 1010, 850, 1.1, CH.mj.c, {bag: '#5E6B45'});
+    const box = (x, title, items, col) => { c.fillStyle = 'rgba(255,255,255,.93)'; rr(c, x, 56, 440, 70 + items.length * 46, 16); c.fill(); txt(c, title, x + 30, 104, {font: `700 30px ${FB}`, color: col}); items.forEach((s, k) => { if (clamp(p * 2.4 - k * .25) <= 0) return; txt(c, s, x + 30, 152 + k * 46, {font: `500 25px ${FB}`, color: '#37474F'}); }); };
+    box(60, '가져간다', ['물 9리터 · 나눠 들기', '약 파우치 · 응급 키트', '신분증 · 현금 · 연락처 종이', '라디오 · 손전등 두 개', '하루 치 식량 · 우비'], '#2E7D4F');
+    box(1100, '두고 간다', ['여행 가방 두 개', '이불 · 베개', '조리 도구', '남은 생수 상자'], '#B03A25');
+  }
+},
+{
+  when: '갈래 · D+2 오후 5시 30분 · 다리 옆 농로', title: '가장 느린 사람이 앞에서',
+  narr: '맨 앞은 박 할아버지였다. 서진이 바로 옆에서 걸었고, 맨 뒤는 민재가 맡았다. 30분을 걷고 5분을 쉬었다. 쉴 때마다 민재가 뒤에서 머릿수를 셌다. 다섯. 해가 산 뒤로 넘어가자 정우가 손전등을 꺼냈다. 다리 건너편 어둠 속에 작은 불빛 두 개가 보였다.',
+  lines: [['pk', '나 때문에 늦어서 어쩌나.'], ['sj', '할아버지가 앞에서 걸으셔야 우리가 안 흩어져요.'], ['mj', '(맨 뒤에서) 다섯, 다 있어요.']],
+  card: {title: '여럿이 걸을 때', items: ['가장 느린 사람이 앞에서 속도를 정하기', '맨 뒤에 한 사람을 두고 쉴 때마다 인원 확인', '30분 걷고 5분 쉬기, 쉴 때 물 한 모금', '통제 구간은 안내된 보행로로만', '해 지기 전에 도착할 수 없으면 가까운 마을에서 묵기', '물집, 다리 부기, 어지럼은 바로 말하기']},
+  draw(c, t, T, p) {
+    sky(c, [[0, '#1E2238'], [.6, '#5A4A6A'], [1, '#B07A5E']]); stars(c, T, 40, 9);
+    ridge(c, 520, 150, '#2E2A36', 5, 0);
+    c.fillStyle = '#6A6458'; c.fillRect(0, 560, 520, 30); c.fillStyle = '#1E1A16'; c.fillRect(300, 556, 60, 34);
+    for (let x = 160; x < 280; x += 40) { c.fillStyle = (x / 40) % 2 ? '#E9B949' : '#B03A25'; c.fillRect(x, 540, 40, 14); }
+    c.fillStyle = '#3E4A36'; c.fillRect(0, 600, W, 300);
+    for (let k = 0; k < 6; k++) { c.fillStyle = k % 2 ? '#4A5840' : '#43503A'; c.fillRect(0, 620 + k * 22, W, 12); }
+    c.fillStyle = '#8A7A5E'; c.fillRect(0, 760, W, 70);
+    c.fillStyle = 'rgba(255,240,190,.95)'; for (const dx of [0, 34]) { c.beginPath(); c.arc(1470 + dx, 700, 7, 0, 7); c.fill(); }
+    const g = c.createRadialGradient(1487, 700, 4, 1487, 700, 120); g.addColorStop(0, 'rgba(255,240,190,.35)'); g.addColorStop(1, 'rgba(255,240,190,0)'); c.fillStyle = g; c.fillRect(1300, 560, 300, 300);
+    const st = T * 5;
+    person(c, 1130, 810, 1, CH.pk.c, {hat: '#4A4038', cane: true, walk: st});
+    person(c, 1040, 810, 1, CH.sj.c, {walk: st + 1});
+    person(c, 930, 810, 1, CH.sy.c, {long: true, walk: st + 2});
+    person(c, 820, 810, 1, CH.jw.c, {item: '#E8E2CF', walk: st + 3});
+    person(c, 710, 810, 1, CH.mj.c, {bag: '#5E6B45', walk: st + 4});
+    c.fillStyle = 'rgba(255,236,170,.14)'; c.beginPath(); c.moveTo(870, 712); c.lineTo(1260, 760); c.lineTo(1250, 830); c.closePath(); c.fill();
+    txt(c, '30분 걷고 5분 쉬기', 800, 160, {font: `400 54px ${FH}`, color: '#F3EBDD', align: 'center'});
+  }
+},
+{
+  when: '갈래 · D+2 오후 6시 20분 · 외가 마을 입구', title: '트럭 불빛',
+  narr: '마을 입구에 닿았을 때는 해가 진 뒤였다. 마지막 10분은 손전등 두 개로 걸었다. 트럭 전조등 앞에서 외삼촌이 손을 흔들었다. 차는 다리 앞 공터에 두고 왔다. 찾으러 가는 건 나중 일이었다. 박달2동을 떠난 지 35시간 가까이 지나 있었다.',
+  lines: [['uncle', '고생했다. 걸어서 넘어온 거 장하다.'], ['sj', '할아버지 다리부터 볼게요. 신발 벗어 보세요.']],
+  card: {title: '걸어서 도착하면', items: ['인원 확인부터', '발, 다리 부기, 체온 살피기 · 젖은 양말은 바로 갈아 신기', '물 마시고 따뜻한 것 먹기', '두고 온 차의 위치와 짐 목록을 종이 지도에 적기', '도착 소식은 정한 연락망으로']},
+  draw(c, t, T, p) {
+    sky(c, [[0, '#121626'], [.7, '#2A2E44'], [1, '#463E50']]); stars(c, T, 80, 13);
+    ridge(c, 500, 150, '#1C1E28', 3, 0);
+    c.fillStyle = '#2A2620'; c.fillRect(0, 700, W, 200);
+    tree(c, 260, 780, 1.5, '#2E3A22');
+    const g = c.createRadialGradient(560, 760, 10, 560, 760, 420); g.addColorStop(0, 'rgba(255,236,170,.35)'); g.addColorStop(1, 'rgba(255,236,170,0)'); c.fillStyle = g; c.fillRect(0, 400, W, 500);
+    pickup(c, 640, 830, 1);
+    c.fillStyle = '#FFE7A3'; c.fillRect(682, 770, 10, 12);
+    person(c, 820, 850, 1.1, CH.uncle.c, {armUp: true, T, hair: '#6B6560'});
+    person(c, 960, 850, 1.05, CH.sy.c, {long: true, flip: true});
+    person(c, 1060, 850, 1.05, CH.jw.c, {item: '#E8E2CF', flip: true});
+    person(c, 1180, 850, 1.05, CH.pk.c, {hat: '#4A4038', sit: true, flip: true});
+    person(c, 1270, 850, 1.05, CH.sj.c, {kneel: true, reach: true, flip: true});
+    person(c, 1400, 850, 1.05, CH.mj.c, {bag: '#5E6B45', flip: true});
+  }
+}
+];
+
 /* ---------- 플레이어 ---------- */
 const $ = id => document.getElementById(id);
 const cv = $('cv'), ctx = cv.getContext('2d');
@@ -867,6 +960,7 @@ let i = 0, t = 0, T = 0, playing = false, ended = false, last = performance.now(
 const BRANCHES = {
   apart: {scenes: BR_APART, end: '가족은 다시 모였어요. 그날 밤 화생방경보 장면부터 본편이 이어져요.', btn: '본편으로 이어 보기'},
   hospital: {scenes: BR_HOSPITAL, end: '본편에서는 서진이 가족과 함께 떠났어요. 출발 장면으로 돌아가요.', btn: '본편으로 돌아가기'},
+  walk: {scenes: BR_WALK, end: '걸어서 외가 마을에 닿았어요. 피난지 생활 장면부터 본편이 이어져요.', btn: '본편으로 이어 보기'},
 };
 for (const [id, b] of Object.entries(BRANCHES)) { b.forkAt = S.findIndex(s => s.fork && s.fork.to === id); const r = S.findIndex(s => s.rejoin === id); b.rejoin = r >= 0 ? r : b.forkAt; }
 /* 지금 보는 장면 목록: 본편(S) 또는 갈래 하나 */
