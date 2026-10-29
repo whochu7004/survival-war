@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>우리 가족 계획서</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: 민방위 수첩처럼 한 장씩 넘기는 종이 서식. 번호 붙은 칸이 위에서 아래로, 인쇄하면 A4 몇 장으로 나뉜다 */
+:root{
+  --paper:#F5F3EC; --sheet:#FFFEFA; --ink:#1E2421; --muted:#5D6862; --rule:#C9CDC4; --line:#9AA39C;
+  --accent:#B9661B; --accent-ink:#FFFFFF; --ok:#2E7D4F; --warn:#B03A25; --hint:#9AA39C;
+  --f-display:"Gowun Batang","Noto Serif KR","Batang",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#121614;--sheet:#1A1F1C;--ink:#E3E8E4;--muted:#9AA59F;--rule:#2E3632;--line:#4A544F;--accent:#E3913F;--accent-ink:#1A1208;--ok:#6CC08F;--warn:#E2654D;--hint:#6B7570;color-scheme:dark}
+}
+:root[data-theme="dark"]{--paper:#121614;--sheet:#1A1F1C;--ink:#E3E8E4;--muted:#9AA59F;--rule:#2E3632;--line:#4A544F;--accent:#E3913F;--accent-ink:#1A1208;--ok:#6CC08F;--warn:#E2654D;--hint:#6B7570;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 var(--f-body)}
+.wrap{max-width:860px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:18px}
+a{color:var(--accent)}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.kicker{font:600 .75rem var(--f-body);letter-spacing:.12em;color:var(--accent)}
+h1{font:700 clamp(1.8rem,5vw,2.5rem)/1.15 var(--f-display);margin:2px 0 0;text-wrap:balance}
+.meta{display:grid;grid-template-columns:auto minmax(0,10em);gap:4px 10px;align-items:center;font-size:.85rem;color:var(--muted)}
+.lead{margin:0;color:var(--muted);max-width:62ch}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:600 .85rem var(--f-body);padding:8px 14px;min-height:38px;border-radius:6px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.danger{color:var(--warn);border-color:var(--warn)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.status{font-size:.8rem;color:var(--muted);margin-left:auto}
+.notice{font-size:.82rem;color:var(--muted);border-left:3px solid var(--rule);padding:2px 0 2px 10px;margin:0}
+
+section.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px 20px 20px;display:flex;flex-direction:column;gap:14px}
+section.sheet > h2{display:flex;align-items:baseline;gap:10px;margin:0;font:700 1.3rem/1.3 var(--f-display);text-wrap:balance}
+h2 .no{font:600 .8rem var(--f-body);color:var(--accent-ink);background:var(--accent);border-radius:3px;padding:1px 7px;font-variant-numeric:tabular-nums;flex:none;transform:translateY(-2px)}
+h3{font:600 .9rem var(--f-body);margin:0;color:var(--muted);letter-spacing:.02em}
+.from{font-size:.8rem;color:var(--muted);margin:-6px 0 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px 18px}
+.field{display:flex;flex-direction:column;gap:2px;min-width:0}
+.field label,.lbl{font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.02em}
+input[type=text],input[type=tel],input[type=number],input[type=date],textarea{
+  width:100%;min-width:0;font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:5px 2px}
+textarea{resize:vertical;min-height:2.6em;border:1px solid var(--line);border-radius:3px;padding:6px 8px;line-height:1.7;
+  background-image:repeating-linear-gradient(transparent 0 calc(1.7em - 1px), var(--rule) calc(1.7em - 1px) 1.7em);background-position:0 6px}
+::placeholder{color:var(--hint);opacity:1}
+input[type=number]{font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:3px}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{border-bottom:1px solid var(--rule);padding:4px 8px;text-align:left;vertical-align:bottom}
+th{font-size:.76rem;font-weight:600;color:var(--muted);background:color-mix(in srgb, var(--rule) 30%, transparent);white-space:nowrap}
+td input{border-bottom:0}
+tr:last-child td{border-bottom:0}
+ul.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:6px 18px}
+ul.checks li label{display:flex;gap:9px;align-items:flex-start;cursor:pointer}
+input[type=checkbox]{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent);flex:none}
+.fixed{font:600 1rem var(--f-body);background:color-mix(in srgb, var(--accent) 12%, transparent);border:1px dashed var(--accent);border-radius:3px;padding:8px 12px;margin:0;font-variant-numeric:tabular-nums}
+.calc{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-variant-numeric:tabular-nums}
+.calc input{width:5.5em}
+.calc output{font-weight:700;color:var(--accent);min-width:4em}
+.inline{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.inline input{width:6em}
+footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--rule);padding-top:12px;display:flex;flex-direction:column;gap:6px}
+
+/* 빈 양식 보기: 적은 내용은 그대로 두고 화면과 인쇄에서만 감춘다 */
+body.blank input[type=text],body.blank input[type=tel],body.blank input[type=number],body.blank input[type=date],body.blank textarea{color:transparent;caret-color:var(--ink)}
+body.blank input::placeholder,body.blank textarea::placeholder{color:transparent}
+body.blank input[type=checkbox]{opacity:.35}
+body.blank output{visibility:hidden}
+
+@media print{
+  :root{--paper:#fff;--sheet:#fff;--ink:#000;--muted:#333;--rule:#999;--line:#555;--accent:#8A4A10;--accent-ink:#fff;--hint:#fff;color-scheme:light}
+  @page{size:A4;margin:14mm 12mm}
+  body{font-size:11pt}
+  .wrap{max-width:none;padding:0}
+  .toolbar,.notice.screen,.back{display:none!important}
+  section.sheet{border:1px solid #999;break-inside:avoid;page-break-inside:avoid}
+  ::placeholder{color:transparent}
+  .tbl{overflow:visible}
+  table{min-width:0}
+  textarea{resize:none}
+  h2 .no,.fixed{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="kicker">생존 - 전쟁편 · 남쪽으로 가는 길</div>
+      <h1>우리 가족 계획서</h1>
+    </div>
+    <div class="meta">
+      <label for="written">작성일</label><input id="written" type="text" placeholder="예: 2026년 11월 1일">
+      <label for="nextcheck">다음 점검일</label><input id="nextcheck" type="text" placeholder="예: 6개월 뒤">
+    </div>
+  </header>
+
+  <p class="lead">이야기 속 가족이 식탁에서 정한 것들을 빈칸으로 옮겼어요. 회색 글씨는 이야기 속 가족의 예시예요. 우리 집에 맞게 채우고, 종이에 적어 가족 모두 한 장씩 지니세요.</p>
+
+  <div class="toolbar">
+    <button class="btn" id="blankBtn" type="button" aria-pressed="false">빈 양식 보기</button>
+    <button class="btn danger" id="clearBtn" type="button">모두 지우기</button>
+    <button class="btn danger" id="clearYes" type="button" hidden>정말 지우기</button>
+    <button class="btn" id="clearNo" type="button" hidden>취소</button>
+    <span class="status" id="status" aria-live="polite"></span>
+  </div>
+  <p class="notice screen">적은 내용은 이 기기의 이 브라우저에만 저장되고, 다른 사람이나 다른 기기로 가지 않아요. 인쇄는 이 파일을 브라우저에서 직접 연 뒤 브라우저의 인쇄 메뉴(Ctrl+P, ⌘P)로 하세요. 대화창 안에서 볼 때는 인쇄가 되지 않을 수 있어요.</p>
+
+  <form id="plan" autocomplete="off">
+
+  <section class="sheet" aria-labelledby="s1">
+    <h2 id="s1"><span class="no">1</span>우리 가족과 함께 챙길 이웃</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>이름</th><th>나이</th><th>휴대폰</th><th>복용약 · 병명</th><th>평소 있는 곳</th></tr></thead>
+      <tbody id="familyRows"></tbody>
+    </table></div>
+    <h3>혼자 사는 이웃 · 도움이 필요한 사람</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>이름</th><th>호수</th><th>연락처</th><th>도움이 필요한 것</th><th>맡는 사람</th></tr></thead>
+      <tbody id="neighborRows"></tbody>
+    </table></div>
+  </section>
+
+  <section class="sheet" aria-labelledby="s2">
+    <h2 id="s2"><span class="no">2</span>경보가 울리면</h2>
+    <p class="from">이야기 D-5 · "사이렌 소리부터 외운다", D-Day 밤 · "이번엔 지하가 아니다"</p>
+    <div class="grid2">
+      <div class="field"><label for="shelterHome">집에서 가장 가까운 대피소</label><input id="shelterHome" type="text" placeholder="예: 우리 아파트 지하 2층 주차장 · 걸어서 2분"></div>
+      <div class="field"><label for="shelterHow">가는 길</label><input id="shelterHow" type="text" placeholder="예: 엘리베이터 말고 동쪽 계단"></div>
+      <div class="field"><label for="chemRoom">화학 공격 안내가 나오면 머물 곳</label><input id="chemRoom" type="text" placeholder="예: 11층 우리 집 안방 · 창이 하나인 방"></div>
+      <div class="field"><label for="chemSeal">막을 틈과 쓸 물건</label><input id="chemSeal" type="text" placeholder="예: 안방 창틀, 방문 아래 · 비닐, 박스테이프, 젖은 수건"></div>
+    </div>
+    <h3>밖에 있을 때 · 자주 있는 곳마다 가까운 지하</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>누가</th><th>자주 있는 곳</th><th>가장 가까운 지하</th><th>걸어서</th></tr></thead>
+      <tbody id="outRows"></tbody>
+    </table></div>
+    <ul class="checks">
+      <li><label><input type="checkbox" id="r_stairs">엘리베이터 말고 계단으로</label></li>
+      <li><label><input type="checkbox" id="r_nohome">밖에 있으면 집으로 뛰지 말고 가까운 지하 먼저</label></li>
+      <li><label><input type="checkbox" id="r_wait">경보 해제 방송 전에는 밖에 나가지 않기</label></li>
+      <li><label><input type="checkbox" id="r_listen">화생방경보는 안내를 끝까지 듣고 따르기</label></li>
+    </ul>
+    <p class="notice">경보 종류와 신호, 대피소 위치는 안전디딤돌 앱이나 국민재난안전포털의 최신 안내로 확인하세요.</p>
+  </section>
+
+  <section class="sheet" aria-labelledby="s3">
+    <h2 id="s3"><span class="no">3</span>나갈 때 누가 무엇을</h2>
+    <p class="from">이야기 D-Day 새벽 · "차 키 대신 지하로"의 "연습한 대로"</p>
+    <div class="tbl"><table>
+      <thead><tr><th>누가</th><th>챙기는 것 · 하는 일</th></tr></thead>
+      <tbody id="roleRows"></tbody>
+    </table></div>
+  </section>
+
+  <section class="sheet" aria-labelledby="s4">
+    <h2 id="s4"><span class="no">4</span>전화가 안 될 때 다시 만나는 법</h2>
+    <p class="from">이야기 D-5 · "전화가 안 될 때 다시 만나는 법", 갈래 1 · 가족이 흩어졌을 때</p>
+    <div class="field"><span class="lbl">문자 형식 · 통화보다 문자 먼저</span><p class="fixed">이름 / 위치 / 상태 / 다음 행동</p></div>
+    <div class="grid2">
+      <div class="field"><label for="meet1">1차 집결지</label><input id="meet1" type="text" placeholder="예: 지하 2층 B구역 기둥 앞"></div>
+      <div class="field"><label for="meet1h">1차에서 기다리는 시간</label><input id="meet1h" type="text" placeholder="예: 경보 해제 후 6시간 안"></div>
+      <div class="field"><label for="meet2">2차 집결지</label><input id="meet2" type="text" placeholder="예: 박달2동 주민센터 · 명부와 게시판"></div>
+      <div class="field"><label for="relay">3차 · 소식을 모아 줄 사람과 유선전화</label><input id="relay" type="text" placeholder="예: 진안 큰외삼촌 · 063-…"></div>
+      <div class="field"><label for="callTime">떨어져 있을 때 연락 시간</label><input id="callTime" type="text" placeholder="예: 매일 저녁 8시, 외삼촌 집 전화로"></div>
+      <div class="field"><label for="meetAgain">따로 지내게 되면 다시 만날 조건</label><input id="meetAgain" type="text" placeholder="예: 휴전, 귀가 허용, 비상 근무 해제"></div>
+    </div>
+    <ul class="checks">
+      <li><label><input type="checkbox" id="r_note">기다리는 쪽은 교대로 자리를 지키고, 비울 땐 쪽지(누가 · 몇 시 · 어디로)</label></li>
+      <li><label><input type="checkbox" id="r_nosearch">경보 중에는 찾으러 나가지 않기</label></li>
+      <li><label><input type="checkbox" id="r_paper">연락처를 적은 종이를 각자 지갑에</label></li>
+      <li><label><input type="checkbox" id="r_register">대피소와 임시 거처의 명부에 꼭 이름 올리기</label></li>
+    </ul>
+  </section>
+
+  <section class="sheet" aria-labelledby="s5">
+    <h2 id="s5"><span class="no">5</span>떠나야 한다면 · 피난지와 경로</h2>
+    <p class="from">이야기 D-3 · "완전히 안전한 곳은 없다", D-2 · "종이 지도가 최후의 보험"</p>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>장소</th><th>주소 · 연락처</th><th>고른 이유</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">1순위</th><td><input id="dest1" type="text" placeholder="예: 전북 진안 외가 마을"></td><td><input id="dest1c" type="text" placeholder="예: 큰외삼촌 063-…"></td><td><input id="dest1w" type="text" placeholder="예: 산간, 우물과 텃밭, 잘 곳"></td></tr>
+        <tr><th scope="row">예비</th><td><input id="dest2" type="text" placeholder="예: 경북 내륙 사촌 집"></td><td><input id="dest2c" type="text"></td><td><input id="dest2w" type="text" placeholder="예: 한적하지만 집이 좁음"></td></tr>
+      </tbody>
+    </table></div>
+    <ul class="checks">
+      <li><label><input type="checkbox" id="c_far">군사시설, 대도시, 산업단지, 항만, 발전소에서 멀다</label></li>
+      <li><label><input type="checkbox" id="c_water">물과 먹을 것을 구하기 쉽다</label></li>
+      <li><label><input type="checkbox" id="c_roads">들어가는 길이 하나만 있지 않다</label></li>
+      <li><label><input type="checkbox" id="c_people">아는 사람이 있다</label></li>
+    </ul>
+    <div class="field"><label for="route">경로 · 고속도로가 막힐 때의 국도와 지방도</label><textarea id="route" rows="2" placeholder="예: 국도 1호선 → 지방도 … · 종이 지도책 몇 쪽"></textarea></div>
+    <h3>세이프 지점 · 두세 시간마다 쉬어 갈 곳</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>장소</th><th>차로</th><th>걸어서</th><th>메모</th></tr></thead>
+      <tbody id="safeRows"></tbody>
+    </table></div>
+    <ul class="checks">
+      <li><label><input type="checkbox" id="s_count">세이프 지점마다 인원 확인</label></li>
+      <li><label><input type="checkbox" id="s_info">앞길 정보 묻고 지도에 표시</label></li>
+      <li><label><input type="checkbox" id="s_supply">물 · 기름 · 약 확인</label></li>
+      <li><label><input type="checkbox" id="s_msg">문자 형식대로 연락</label></li>
+      <li><label><input type="checkbox" id="s_go">출발 조건 확인 · 경보 없음, 길 열림, 해 지기 전 도착</label></li>
+      <li><label><input type="checkbox" id="s_walk">차를 두게 되면 길을 막지 않게 세우고 쪽지 남기기</label></li>
+    </ul>
+  </section>
+
+  <section class="sheet" aria-labelledby="s6">
+    <h2 id="s6"><span class="no">6</span>비상 가방 · 주머니 키트 · 서류 봉투</h2>
+    <p class="from">이야기 D-4 · "사흘 치만, 목록대로", 갈래 1 · "맨손으로 버틴 열 시간"</p>
+    <div class="field"><span class="lbl">물 계산</span>
+      <div class="calc">
+        <input id="w_people" type="number" min="0" inputmode="numeric" placeholder="4" aria-label="인원"><span>명 ×</span>
+        <input id="w_days" type="number" min="0" inputmode="numeric" placeholder="3" aria-label="일수"><span>일 ×</span>
+        <input id="w_liters" type="number" min="0" step="0.5" inputmode="decimal" placeholder="리터" aria-label="1인 하루 리터"><span>리터 =</span>
+        <output id="w_total" for="w_people w_days w_liters">—</output>
+      </div>
+      <span class="from" style="margin:0">1인 하루 양은 공식 안내를 확인해 적으세요.</span>
+    </div>
+    <div class="grid2">
+      <div class="field"><span class="lbl">72시간 가방</span>
+        <ul class="checks" id="bagList"></ul>
+      </div>
+      <div class="field" style="gap:14px">
+        <div class="field"><span class="lbl">늘 몸에 지니는 주머니 키트</span><ul class="checks" id="pocketList"></ul></div>
+        <div class="field"><span class="lbl">서류 봉투</span><ul class="checks" id="docList"></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" aria-labelledby="s7">
+    <h2 id="s7"><span class="no">7</span>피난이 길어지면</h2>
+    <p class="from">갈래 4 · 피난이 길어질 때</p>
+    <h3>약이 떨어지기 전에 · 2주 남으면 움직이기</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>누구</th><th>약 이름 · 용량</th><th>하루 몇 알</th><th>남은 알</th><th>남은 날</th></tr></thead>
+      <tbody id="medRows"></tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="field"><label for="clinic">처방을 이어 받을 곳</label><input id="clinic" type="text" placeholder="예: 면 보건지소 · 약 봉투 지참"></div>
+      <div class="field"><label for="weekly">매주 점검하는 요일</label><input id="weekly" type="text" placeholder="예: 일요일 저녁 · 식량, 연료, 현금"></div>
+    </div>
+    <h3>돌아갈 조건 · 다 채워지기 전엔 움직이지 않기</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>조건</th><th>채워졌나</th></tr></thead>
+      <tbody id="condRows"></tbody>
+    </table></div>
+  </section>
+
+  </form>
+
+  <footer>
+    <span>이 계획서는 애니메이션 「남쪽으로 가는 길」의 이야기를 바탕으로 만든 연습용 양식이에요. 실제 비상 상황에서는 정부 · 지자체 · 군의 공식 안내를 따르세요.</span>
+    <a class="back" href="index.html">← 애니메이션으로 돌아가기</a>
+  </footer>
+</div>
+
+<script>
+// 표 줄 만들기: 각 칸은 고정된 id를 가져서 저장 · 복원 · 다시 게시할 때도 값이 유지된다
+const $ = id => document.getElementById(id);
+function rows(tbodyId, prefix, cols, examples, count) {
+  const tb = $(tbodyId);
+  for (let r = 0; r < count; r++) {
+    const tr = document.createElement('tr');
+    cols.forEach((col, k) => {
+      const td = document.createElement('td');
+      if (col === '#') { td.textContent = r + 1; td.style.fontVariantNumeric = 'tabular-nums'; tr.append(td); return; }
+      const inp = document.createElement('input');
+      inp.type = col === 'num' ? 'number' : 'text'; if (col === 'num') { inp.min = '0'; inp.inputMode = 'numeric'; }
+      inp.id = `${prefix}_${r}_${k}`;
+      const ex = examples[r] && examples[r][k]; if (ex) inp.placeholder = ex;
+      inp.setAttribute('aria-label', `${tb.closest('table').querySelectorAll('th')[k].textContent} ${r + 1}`);
+      td.append(inp); tr.append(td);
+    });
+    tb.append(tr);
+  }
+}
+rows('familyRows', 'fam', ['t', 't', 't', 't', 't'], [['김정우', '52', '010-…', '고혈압약 · 아침 1알', '회사 · 공장'], ['이수연', '49', '010-…', '', '도서관'], ['김서진', '24', '010-…', '', '수원 병원 응급실'], ['김민재', '20', '010-…', '', '역 앞 편의점 (야간)']], 5);
+rows('neighborRows', 'nb', ['t', 't', 't', 't', 't'], [['박 할아버지', '3층', '010-…', '계단, 짐 들기, 약 챙기기', '정우']], 2);
+rows('outRows', 'out', ['t', 't', 't', 't'], [['민재', '역 앞 편의점', '역 앞 지하상가', '1분'], ['서진', '수원 병원', '병원 지하', '바로']], 4);
+rows('roleRows', 'role', ['t', 't'], [['민재', '현관의 공용 비상 가방과 생수'], ['서진', '응급 키트와 약 파우치'], ['수연', '지갑, 서류 봉투, 라디오'], ['정우', '가스 밸브 잠그고 차단기 내린 뒤 박 할아버지 집으로'], ['모두', '엘리베이터 말고 계단으로']], 5);
+rows('safeRows', 'safe', ['#', 't', 't', 't', 't'], [['', '아파트 지하 대피소', '-', '2분', '세이프 1'], ['', '경기 남부 외곽 중학교', '1시간', '', '피난민 등록'], ['', '충남 북부 면사무소 · 마을회관', '', '', '묵을 수 있음'], ['', '충남 남부 작은 성당', '', '', ''], ['', '전북 내륙 고개 아래 휴게소', '', '', '주유소 확인']], 5);
+rows('medRows', 'med', ['t', 't', 'num', 'num', 'o'], [['정우', '고혈압약 · ○○mg', '1', '30']], 3);
+rows('condRows', 'cond', ['t', 't'], [['우리 지역 경보 해제', ''], ['전기 · 수도 복구', ''], ['귀가 허용 발표', '']], 3);
+// 약 표의 마지막 칸은 입력이 아니라 계산 결과
+document.querySelectorAll('#medRows tr').forEach((tr, r) => { const td = tr.lastElementChild; td.innerHTML = ''; const o = document.createElement('output'); o.id = `med_${r}_out`; o.textContent = '—'; td.append(o); });
+
+function checks(listId, prefix, items) {
+  const ul = $(listId);
+  items.forEach((s, k) => { const li = document.createElement('li'); li.innerHTML = `<label><input type="checkbox" id="${prefix}_${k}"><span></span></label>`; li.querySelector('span').textContent = s; ul.append(li); });
+}
+checks('bagList', 'bag', ['물 (위 계산만큼)', '처방약과 상비약', '신분증 사본, 소액권 현금, 연락처 종이', '휴대용 라디오와 건전지', '손전등, 보조배터리', '조리 없이 먹는 식량', '은박 담요, 우비, 마스크, 위생용품', '응급처치 키트와 편한 운동화', '비닐, 박스테이프, 수건']);
+checks('pocketList', 'pk', ['연락처 적은 종이', '소액 현금과 동전', '작은 보조배터리와 케이블', '물 한 병', '마스크와 하루치 복용약', '작은 손전등']);
+checks('docList', 'doc', ['신분증 사본', '가족관계 · 주소 서류', '약 봉투나 처방전', '보험 · 통장 사본', '집 사진 (피해 기록 비교용)']);
+
+// 계산
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) ? v : null; };
+function calc() {
+  const a = num('w_people'), b = num('w_days'), c = num('w_liters');
+  $('w_total').textContent = a != null && b != null && c != null ? `${+(a * b * c).toFixed(1)}리터` : '—';
+  document.querySelectorAll('#medRows tr').forEach((tr, r) => {
+    const per = num(`med_${r}_2`), left = num(`med_${r}_3`), o = $(`med_${r}_out`);
+    if (per && left != null) { const d = Math.floor(left / per); o.textContent = `${d}일`; o.style.color = d <= 14 ? 'var(--warn)' : 'var(--ok)'; o.style.fontWeight = '700'; }
+    else { o.textContent = '—'; o.style.color = ''; }
+  });
+}
+
+// 저장: 이 브라우저에만. 막혀 있어도 양식은 그대로 쓸 수 있다
+const KEY = 'family-plan-v1';
+const fields = () => [...document.querySelectorAll('input, textarea')].filter(el => el.id && !el.closest('.toolbar'));
+function load() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { data = null; }
+  if (!data) return;
+  fields().forEach(el => { if (!(el.id in data)) return; if (el.type === 'checkbox') el.checked = !!data[el.id]; else el.value = data[el.id]; });
+}
+let saveT = null;
+function save() {
+  const data = {}; fields().forEach(el => { data[el.id] = el.type === 'checkbox' ? el.checked : el.value; });
+  try { localStorage.setItem(KEY, JSON.stringify(data)); $('status').textContent = '이 브라우저에 저장됨'; }
+  catch (e) { $('status').textContent = '이 브라우저에서는 저장되지 않아요. 종이에 옮겨 두세요.'; }
+}
+document.addEventListener('input', e => { if (!e.target.closest('#plan, header.top')) return; calc(); clearTimeout(saveT); saveT = setTimeout(save, 400); });
+document.addEventListener('change', e => { if (e.target.type === 'checkbox') save(); });
+$('plan').addEventListener('submit', e => e.preventDefault());
+
+// 빈 양식 보기
+$('blankBtn').addEventListener('click', () => { const on = document.body.classList.toggle('blank'); $('blankBtn').setAttribute('aria-pressed', String(on)); $('blankBtn').textContent = on ? '적은 내용 보기' : '빈 양식 보기'; });
+
+// 모두 지우기: 한 번 더 눌러야 지워진다
+const confirmRow = show => { $('clearBtn').hidden = show; $('clearYes').hidden = !show; $('clearNo').hidden = !show; };
+$('clearBtn').addEventListener('click', () => { confirmRow(true); $('status').textContent = '적은 내용을 모두 지울까요?'; $('clearNo').focus(); });
+$('clearNo').addEventListener('click', () => { confirmRow(false); $('status').textContent = ''; });
+$('clearYes').addEventListener('click', () => {
+  fields().forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  calc(); confirmRow(false); $('status').textContent = '모두 지웠어요.'; $('clearBtn').focus();
+});
+
+load(); calc();
+</script>
+</body>
+</html>
